@@ -12,7 +12,21 @@ import Error from './components/Error';
 import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
+import SnippetPage from './components/SnippetPage';
 
+const requireAuth = () => {
+  if(!localStorage.getItem('token')) {
+    window.location.href = '/login';
+  }
+  // stay on this route since the user is authenticated
+}
+
+const verifyAuth = () => {
+  if(localStorage.getItem('token')) {
+    window.location.href = '/';
+  }
+  // stay on this route since the user is not authenticated
+}
 
 const BrowserRouter = createBrowserRouter([
   {
@@ -26,11 +40,15 @@ const BrowserRouter = createBrowserRouter([
       },
       {
         path: '/login',
-        element: <Login />
+        element: <Login verifyAuth={verifyAuth}/>
       },
       {
         path: '/register',
-        element: <Register />
+        element: <Register verifyAuth={verifyAuth}/>
+      },
+      {
+        path: '/snippet/:shortid',
+        element: <SnippetPage />
       }
     ]
   }
