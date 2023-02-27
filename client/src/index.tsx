@@ -9,10 +9,10 @@ import {
 
 import App from './App';
 import Error from './components/Error';
-import Home from './components/Home';
-import Login from './components/Login';
-import Register from './components/Register';
-import SnippetPage from './components/SnippetPage';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import { getUserFromToken } from './auth/validateToken';
 
 const requireAuth = () => {
   if(!localStorage.getItem('token')) {
@@ -22,7 +22,7 @@ const requireAuth = () => {
 }
 
 const verifyAuth = () => {
-  if(localStorage.getItem('token')) {
+  if(getUserFromToken()) {
     window.location.href = '/';
   }
   // stay on this route since the user is not authenticated
@@ -45,10 +45,6 @@ const BrowserRouter = createBrowserRouter([
       {
         path: '/register',
         element: <Register verifyAuth={verifyAuth}/>
-      },
-      {
-        path: '/snippet/:shortid',
-        element: <SnippetPage />
       }
     ]
   }

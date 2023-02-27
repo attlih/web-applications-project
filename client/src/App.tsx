@@ -11,7 +11,6 @@ import {
 import CameraIcon from '@mui/icons-material/PhotoCamera';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-
 const theme = createTheme();
 
 function App() {

@@ -44,16 +44,15 @@ export default function Register(props: Props) {
             body: JSON.stringify(user),
         })
             .then((response) => {
-                if (response.status === 200) {
+                if (response.ok) {
                     window.location.href = '/login';
+                } else {
+                    return response.json();
                 }
-                return response.json();
             })
             .then((data) => {
-                console.log(data);
-            }
-            
-        );
+                if (data) console.log(data);
+            });
     };
 
     return (

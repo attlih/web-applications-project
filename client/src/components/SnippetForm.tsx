@@ -30,6 +30,7 @@ export default function SnippetForm() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'authorization': "Bearer " + localStorage.getItem('token')
             },
             body: JSON.stringify(formData),
         })
@@ -40,6 +41,7 @@ export default function SnippetForm() {
             title: '',
             code: '',
         });
+        window.location.reload();
     };
 
 

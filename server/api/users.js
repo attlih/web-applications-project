@@ -12,6 +12,7 @@ const User = require('../models/User');
 
 // register a user
 // TODO add better validation?
+// TODO add good password requirements
 router.post('/register/',
   // validate user input
   body('email').isEmail(),
@@ -80,11 +81,11 @@ router.post('/login/',
             username: user.username,
             email: user.email,
           };
-          jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
+          jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => { 
             if (err) {
               res.status(500).json({ message: err.message });
             }
-            res.json({success: true, token: "Bearer " + token});
+            res.json({success: true, token: token});
           });
         } else {
           res.status(401).json({ message: "Invalid credentials" });

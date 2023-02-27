@@ -42,14 +42,13 @@ export default function SignIn(props: Props) {
       body: JSON.stringify(user),
     })
       .then((response) => {
-        if (response.status === 200) {
+        if (response.ok) {
           window.location.href = '/';
         }
         return response.json();
       })
       .then((data) => {
-        localStorage.setItem('token', data.token)
-        console.log(data);
+        if (data.token) localStorage.setItem('token', data.token)
       }
     );
   };
