@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { useState, useEffect } from 'react'
-import { CommentType } from '../types'
+import { CommentType } from '../dec/types'
 
 // TODO add timestamp
 // TODO change user format to username

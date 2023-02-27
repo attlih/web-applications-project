@@ -10,6 +10,7 @@ dotenv.config();
 // routers
 var snippetsRouter = require('./api/snippets');
 var usersRouter = require('./api/users');
+var commentsRouter = require('./api/comments')
 
 var app = express();
 
@@ -45,6 +46,7 @@ app.use(cookieParser());
 
 app.use('/snippet', snippetsRouter);
 app.use('/user', usersRouter);
+app.use('/comment', commentsRouter);
 
 // set public folder
 app.use(express.static(path.join(__dirname, 'public')));

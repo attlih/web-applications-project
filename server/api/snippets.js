@@ -27,20 +27,6 @@ router.get("/:id",
     }
 );
 
-// get all comments for a snippet
-router.get("/comment/:id",
-    (req, res) => {
-        Snippet.findOne({ shortid: req.params.id })
-            .populate("comments")
-            .exec((err, snippet) => {
-                if (err) {
-                    res.status(500).json({ message: err.message });
-                }
-                res.json(snippet.comments);
-            });
-    }
-);
-
 /* RESTRICTED ROUTES */
 
 // add a snippet
@@ -62,31 +48,9 @@ router.post("/", validateToken,
     }
 );
 
-// add a comment
-router.post("/comment/", validateToken,
-    async (req, res, next) => {
-        // save comment
-        try {
-            // create comment
-            const comment = await Comment.create({
-                postedby: req.user.username,
-                comment: req.body.comment
-            });
-            // save comment
-            await comment.save();
-            console.log(comment);
-            // save comment id to snippet
-            const snippet = await Snippet.findOneAndUpdate({ shortid: req.body.shortid }, { $push: { comments: comment._id } }, { new: true });
-            res.status(201).json({message: "Comment added"});
-        } catch (err) {
-            res.status(500).json({ message: err.message });
-        }
-    }
-)
-
 // Update snippet likes
 router.post("/:id", validateToken,
-    async (req, res) => {
+    async (req, res, next) => {
         const snippet = await Snippet.findOne({ shortid: req.params.id });
         if (!snippet) {
             return res.status(404).json({ error: 'Snippet not found.' });
@@ -104,7 +68,8 @@ router.post("/:id", validateToken,
             }
             res.status(201).json(snippet);
         });
-    }
+    },
+    
 );
 
 module.exports = router;
