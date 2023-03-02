@@ -1,4 +1,10 @@
-import { CommentType, CommentFormType, SnippetType, UserType, SnippetFormType } from './types';
+import {
+    CommentType,
+    CommentFormType, 
+    SnippetType, 
+    UserType, 
+    SnippetFormType,
+} from './types';
 
 interface SnippetProps {
     snippet: SnippetType | null,
@@ -9,6 +15,8 @@ interface SnippetProps {
         handleCommentSubmit: (e: React.FormEvent<HTMLFormElement>) => void,
         handleCommentChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
         handleSnippetClick: (snippet: SnippetType | null) => void,
+        handleEditButton: (snippet: SnippetType | null) => void,
+        handleDeleteButton: (snippet: SnippetType | null) => void,
     },
     other: {
         snippetClicked: boolean,
@@ -25,12 +33,18 @@ interface SnippetFormProps {
     handlers: {
         handleSnippetFormChange: (e: any) => void
         handleSnippetFormSubmit: (e: React.FormEvent<HTMLFormElement>) => void
-        // handleKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void
     }
 }
+
+interface HomeButtonsProps {
+    handlePostButtonClick: () => void,
+    handleLogout: (event: any) => void,
+    user: UserType | null,
+  }
 
 export type {
     SnippetProps,
     SnippetListProps as SnippetGridProps,
-    SnippetFormProps
+    SnippetFormProps,
+    HomeButtonsProps,
 };

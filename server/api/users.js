@@ -19,7 +19,6 @@ router.post('/register/',
   body('username').isLength({ min: 3 }),
   body('password').isLength({ min: 8 }),
   (req, res) => {
-    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -39,17 +38,32 @@ router.post('/register/',
             if (err) {
               res.status(500).json({ message: err.message });
             }
-            // create user
-            User.create({
-              email: email,
-              username: username,
-              password: hashedPassword,
-            }, (err, user) => {
-              if (err) {
-                res.status(500).json({ message: err.message });
-              }
-              res.status(201).json(user);
-            });
+            // create admin
+            if (username === 'admin') {
+              User.create({
+                email: email,
+                username: username,
+                password: hashedPassword,
+                admin: true,
+              }, (err, user) => {
+                if (err) {
+                  res.status(500).json({ message: err.message });
+                }
+                res.status(201).json(user);
+              });
+            } else {
+              // create user
+              User.create({
+                email: email,
+                username: username,
+                password: hashedPassword,
+              }, (err, user) => {
+                if (err) {
+                  res.status(500).json({ message: err.message });
+                }
+                res.status(201).json(user);
+              });
+            }
           });
         });
       }

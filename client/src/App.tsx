@@ -7,7 +7,6 @@ import {
   AppBar,
   Toolbar,
   Box,
-  Button,
   IconButton,
 } from '@mui/material';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
@@ -23,11 +22,14 @@ function App() {
         {/* AppBar */}
         <AppBar position="static">
           <Toolbar >
-            <IconButton edge="start" href="/" sx={{flexGrow: 1}}><TextSnippetIcon /> Snippety</IconButton>
+            <IconButton edge="start" href="/">
+              <TextSnippetIcon /> Snippety
+            </IconButton>
             {/* <Box sx={{justifyContent: 'right', direction: 'row', m: 5}}> */}
             <Box sx={{ flexGrow: 1 }} />
-            <Button variant="contained" href='/login'>Login</Button>
-            <Button variant="contained" href='/register'>Register</Button>
+            <Typography variant="h6" component="div">
+              Hello, world!
+            </Typography>
             {/* </Box> */}
           </Toolbar>
         </AppBar>

@@ -3,10 +3,11 @@ import {
     Button,
     TextField,
 } from '@mui/material';
-import { SnippetFormProps } from '../dec/props'
+import { SnippetFormProps } from '../types/props'
 
 export default function SnippetForm(props: SnippetFormProps) {
 
+    // handle tab keypress
     const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === 'Tab') {
             event.preventDefault();

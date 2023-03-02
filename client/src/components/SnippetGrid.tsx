@@ -2,7 +2,7 @@ import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import {Snippet} from './Snippet';
-import { SnippetGridProps } from '../dec/props';
+import { SnippetGridProps } from '../types/props';
 
 export default function SnippetGrid(props: SnippetGridProps) {
     return (

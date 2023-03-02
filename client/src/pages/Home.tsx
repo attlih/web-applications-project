@@ -1,15 +1,12 @@
 import { Box, Button, Typography, Container, Stack, Grid } from '@mui/material'
-import SnippetGrid from '../components/SnippetGrid';
+// import SnippetGrid from '../components/SnippetGrid';
 import SnippetForm from '../components/SnippetForm';
 import { useState, useEffect } from 'react';
 import { getUserFromToken } from '../auth/validateToken';
 import {Snippet} from '../components/Snippet';
-import { SnippetType, CommentType, UserType, CommentFormType, SnippetFormType } from '../dec/types';
+import { SnippetType, CommentType, UserType, CommentFormType, SnippetFormType } from '../types/types';
+import { HomeButtonsProps } from '../types/props';
 
-interface HomeButtonsProps {
-  handlePostButtonClick: () => void,
-  handleLogout: (event: any) => void,
-}
 // TODO change data transfer handling, its a mess
 // TODO login doesnt work as expected, stays logged in after refresh, even if no token
 // TODO add like functionality
@@ -17,11 +14,12 @@ interface HomeButtonsProps {
 
 function Home() {
   // states
-  const [user, setUser] = useState<UserType | null>(getUserFromToken());
+  const [user, setUser] = useState<UserType | null>(null);
   const [snippets, setSnippets] = useState<SnippetType[]>([]);
   const [comments, setComments] = useState<CommentType[]>([]);
   // TODO change default values, not wokring when refreshing
   const [isPosting, setIsPosting] = useState(false); // show snippet form
+  const [isEditing, setIsEditing] = useState(false); // show snippet form
   const [snippet, setSnippet] = useState<SnippetType | null>(null); // clicked snippet
   const [snippetClicked, setSnippetClicked] = useState(false);
   const [commentForm, setCommentForm] = useState<CommentFormType>({ "shortid": "", "comment": '', "user": "" });
@@ -62,12 +60,17 @@ function Home() {
   const handlePostButtonClick = () => {
     if (!user) return;
     setIsPosting(!isPosting);
+    if (isEditing) setIsEditing(!isEditing);
+    setSnippetForm({
+      title: '',
+      code: '',
+    });
   };
 
   const handleLogout = (event: any) => {
     event.preventDefault();
     localStorage.removeItem('token');
-    setUser(getUserFromToken());
+    setUser(null);
   };
 
   const handleLikeButton = () => {
@@ -128,6 +131,39 @@ function Home() {
       });
   };
 
+  // handle edit button click
+  const handleEditButton = (snippet: SnippetType | null) => {
+    setSnippet(snippet);
+    if (!snippet) return;
+    if (!isPosting) setIsPosting(!isPosting);
+    if (!isEditing) setIsEditing(!isEditing);
+    
+    // set snippet form values
+    setSnippetForm({
+      title: snippet.title,
+      code: snippet.code,
+    });
+    // scroll to top
+    window.scrollTo(0, 0);
+  }
+  // handle delete button click
+  const handleDeleteButton = (snippet: SnippetType | null) => {
+    if (!snippet) return;
+    fetch('/snippet/admin/delete/' + snippet.shortid, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': "Bearer " + localStorage.getItem('token')
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        // update snippets state, data is the deleted snippet
+        const newSnippets = snippets.filter((s) => s.shortid !== data.shortid);
+        setSnippets(newSnippets);
+      })
+  }
+
   // state handlers
   const handleCommentChange = (e: any) => { // TODO fix type
     e.preventDefault(); 
@@ -137,13 +173,22 @@ function Home() {
 
   /* Snippet form */ 
   const handleSnippetFormChange = (e: any) => { // TODO fix type
+    console.log('editing: ', isEditing);
     setSnippetForm({ ...snippetForm, [e.target.name]: e.target.value });
   };
 
   const handleSnippetFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    // check if is editing
+    let route: string;
+    if (isEditing) {
+      if (!snippet) return;
+      route = '/snippet/update/' + snippet.shortid;
+    } else {
+      route = '/snippet';
+    }
     // send to server
-    fetch('/snippet', {
+    fetch(route, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -153,8 +198,17 @@ function Home() {
     })
       .then((res) => res.json())
       .then((data) => {
-        // add snippet to state
-        setSnippets([...snippets, data]);
+        if (isEditing) {
+          // replace snippet in state
+          const newSnippets = [...snippets];
+          const index = snippets.findIndex((s) => s.shortid === data.shortid);
+          newSnippets[index] = data;
+          setSnippets(newSnippets);
+        } else {
+          // add snippet to state
+          setSnippets([...snippets, data]);
+        }
+        
         // clear form
         setSnippetForm({
           title: '',
@@ -164,7 +218,14 @@ function Home() {
       });
   };
 
-  const snippetHandlers = { handleCommentChange, handleCommentSubmit, handleLikeButton, handleSnippetClick }
+  const snippetHandlers = {
+    handleCommentChange,
+    handleCommentSubmit,
+    handleLikeButton,
+    handleSnippetClick,
+    handleEditButton,
+    handleDeleteButton,
+  }
   const snippetFormHandlers = {handleSnippetFormChange, handleSnippetFormSubmit }
   return (
     <main>
@@ -187,14 +248,17 @@ function Home() {
             Snippety
           </Typography>
           <Typography variant="h5" align="center" color="text.secondary" paragraph>
-            Awesome collection of code snippets, for everyone. By creating an account you can save your own snippets and share them with others.
+            Awesome collection of code snippets, for everyone. By creating an account you can save
+            your own snippets and share them with others.
           </Typography>
           <HomeButtons
             handlePostButtonClick={handlePostButtonClick}
+            user={user}
             handleLogout={handleLogout} />
         </Container>
       </Box>
       {isPosting && user ? <SnippetForm data={snippetForm} handlers={snippetFormHandlers}/> : null}
+      {/* Show one or all snippets */}
       {snippetClicked
         ? <Snippet snippet={snippet} comments={comments} user={user}
           handlers={snippetHandlers}
@@ -202,7 +266,7 @@ function Home() {
         : 
           <Grid container spacing={5} p={5}>
             {snippets.map((snippet) => (
-              <Grid item key={snippet.shortid} xl={6} maxWidth={1} >
+              <Grid item key={snippet.shortid} maxWidth={1} >
                 <Snippet snippet={snippet} comments={comments} user={user}
                   handlers={snippetHandlers}
                   other={{ snippetClicked, commentForm }} />
@@ -217,7 +281,7 @@ function Home() {
 function HomeButtons(props: HomeButtonsProps) {
   return (
     <div>
-      {getUserFromToken()
+      {(props.user !== null)
         ? <Stack
           spacing={2}
           sx={{ pt: 4 }}
