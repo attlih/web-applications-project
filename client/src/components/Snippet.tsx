@@ -12,6 +12,8 @@ import {
 import Comment from './Comment'
 import { SnippetProps } from '../dec/props'
 import { ThumbUp, Comment as CommentIcon } from '@mui/icons-material';
+// highlight.js for react
+import SyntaxHighlighter from 'react-syntax-highlighter';
 
 function Snippet(props: SnippetProps) {
     if (!props.snippet) return (<div></div>);
@@ -19,18 +21,10 @@ function Snippet(props: SnippetProps) {
     const comments = props.comments.filter(comment => props.snippet?.comments.some(c => c === comment._id))
 
     return (
-        <Card
-            sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: 'grey.200' }}
-        >
-            <CardContent onClick={() => props.handlers.handleSnippetClick(props.snippet)} sx={{
-                textAlign: 'left'
-            }}>
-                <Typography gutterBottom variant="h5" component="h2">
-                    {props.snippet.title}
-                </Typography>
-                <Typography sx={{ whiteSpace: 'pre-line' }}>
-                    {props.snippet.code}
-                </Typography>
+        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: 'grey' }}>
+            <CardContent onClick={() => props.handlers.handleSnippetClick(props.snippet)} sx={{ textAlign: 'left' }}>
+                <Typography gutterBottom variant="h5" component="h2">{props.snippet.title}</Typography>
+                <SyntaxHighlighter >{props.snippet.code}</SyntaxHighlighter>
             </CardContent>
             <CardActions>
                 <IconButton size="small" onClick={props.handlers.handleLikeButton}><ThumbUp /> {props.snippet.likes.length}</IconButton>
@@ -39,10 +33,7 @@ function Snippet(props: SnippetProps) {
             {props.other.snippetClicked
                 ? <Stack
                     direction="column"
-                    sx={{
-                        p: 2,
-                        bgcolor: 'grey.300',
-                    }}>
+                    sx={{ p: 2, bgcolor: 'grey.300', }}>
                     {comments.map((comment) => (
                         <Comment key={comment._id} _id={comment._id} postedby={comment.postedby} comment={comment.comment} postedon={comment.postedon} />
                     ))}
@@ -69,4 +60,5 @@ function Snippet(props: SnippetProps) {
     )
 }
 
-export default Snippet;
+// export all
+export { Snippet }

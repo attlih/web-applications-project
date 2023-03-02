@@ -7,8 +7,10 @@ import {
   AppBar,
   Toolbar,
   Box,
+  Button,
+  IconButton,
 } from '@mui/material';
-import CameraIcon from '@mui/icons-material/PhotoCamera';
+import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme();
@@ -18,14 +20,18 @@ function App() {
     <div className="App">
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <AppBar position="relative">
-          <Toolbar>
-            <CameraIcon sx={{ mr: 2 }} />
-            <Typography variant="h6" color="inherit" noWrap >
-              Snippety
-            </Typography>
+        {/* AppBar */}
+        <AppBar position="static">
+          <Toolbar >
+            <IconButton edge="start" href="/" sx={{flexGrow: 1}}><TextSnippetIcon /> Snippety</IconButton>
+            {/* <Box sx={{justifyContent: 'right', direction: 'row', m: 5}}> */}
+            <Box sx={{ flexGrow: 1 }} />
+            <Button variant="contained" href='/login'>Login</Button>
+            <Button variant="contained" href='/register'>Register</Button>
+            {/* </Box> */}
           </Toolbar>
         </AppBar>
+        {/* Main page */}
         <Outlet />
         {/* Footer */}
         <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
@@ -34,7 +40,6 @@ function App() {
           </Typography>
           <Copyright />
         </Box>
-        {/* End footer */}
       </ThemeProvider>
     </div>
   );

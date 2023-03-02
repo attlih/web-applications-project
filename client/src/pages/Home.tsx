@@ -3,7 +3,7 @@ import SnippetGrid from '../components/SnippetGrid';
 import SnippetForm from '../components/SnippetForm';
 import { useState, useEffect } from 'react';
 import { getUserFromToken } from '../auth/validateToken';
-import Snippet from '../components/Snippet';
+import {Snippet} from '../components/Snippet';
 import { SnippetType, CommentType, UserType, CommentFormType, SnippetFormType } from '../dec/types';
 
 interface HomeButtonsProps {
@@ -130,7 +130,7 @@ function Home() {
 
   // state handlers
   const handleCommentChange = (e: any) => { // TODO fix type
-    e.preventDefault();
+    e.preventDefault(); 
     if (!user) return;
     setCommentForm({ ...commentForm, [e.target.name]: e.target.value });
   };
@@ -199,17 +199,16 @@ function Home() {
         ? <Snippet snippet={snippet} comments={comments} user={user}
           handlers={snippetHandlers}
           other={{ snippetClicked, commentForm }} />
-        : <Container sx={{ py: 8 }} maxWidth="md">
-          <Grid container spacing={3}>
+        : 
+          <Grid container spacing={5} p={5}>
             {snippets.map((snippet) => (
-              <Grid item key={snippet.shortid} xs={12} sm={12} md={6}>
+              <Grid item key={snippet.shortid} xl={6} maxWidth={1} >
                 <Snippet snippet={snippet} comments={comments} user={user}
                   handlers={snippetHandlers}
                   other={{ snippetClicked, commentForm }} />
               </Grid>
             ))}
           </Grid>
-        </Container>
       }
     </main>
   );

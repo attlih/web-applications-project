@@ -25,6 +25,7 @@ interface SnippetFormProps {
     handlers: {
         handleSnippetFormChange: (e: any) => void
         handleSnippetFormSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+        // handleKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void
     }
 }
 
