@@ -4,6 +4,8 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "pre-install": "npm install && cd server && npm install",
+    "install": "cd client && npm install",
     "dev:client": "npm start --prefix client",
     "dev:server": "npm run dev --prefix server",
     "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
@@ -14,8 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "concurrently": "^7.6.0",
-    "dotenv": "^16.0.3",
-    "jsonwebtoken": "^9.0.0"
+    "dotenv": "^16.0.3"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.54.0",
