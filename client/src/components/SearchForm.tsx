@@ -9,7 +9,7 @@ const SearchForm = (props: SearchFormProps): JSX.Element => {
         component="form"
         justifyContent={'center'}
         onSubmit={props.handlers.handleSearchFormSubmit}
-        sx={{ p: 1, display: 'flex', alignItems: 'center' }}>
+        sx={{ p: 3, display: 'flex', alignItems: 'center' }}>
         <TextField
           label="Search"
           name="search"
