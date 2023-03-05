@@ -22,6 +22,7 @@ You can clone this repository by running
 
 ```
 git clone https://github.com/attlih/web-applications-project.git
+cd web-applications-project
 ```
 
 After cloning, you must set two environment variables. `JWT_SECRET` for authentication and `NODE_ENV` for cors. Server supports dotenv, so you can create following `.env` file to **server** folder:
@@ -34,8 +35,7 @@ NODE_ENV="production"
 After that, just run these commands and head to [Localhost](http://localhost:4000)
 
 ```
-npm run pre-install
-npm run install
+npm run install-all
 npm start
 ```
 

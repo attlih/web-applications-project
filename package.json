@@ -4,8 +4,9 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "pre-install": "npm install && cd server && npm install",
-    "install": "cd client && npm install",
+    "server-install": "cd server && npm install",
+    "client-install": "cd client && npm install",
+    "install-all": "npm install && npm run server-install && npm run client-install",
     "dev:client": "npm start --prefix client",
     "dev:server": "npm run dev --prefix server",
     "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
