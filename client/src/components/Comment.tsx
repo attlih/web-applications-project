@@ -1,20 +1,31 @@
 import { Box, Typography } from '@mui/material'
-import { useState, useEffect } from 'react'
-import { CommentType } from '../types/types'
-
-// TODO add timestamp
-// TODO change user format to username
+import { CommentType } from '../misc/types'
+import { formatDateTime } from '../misc/functions'
 
 export default function Comment(props: CommentType) {
     return (
         <Box
             sx={{
-                m: 0.5,
                 p: 2,
                 bgcolor: "white",
-                display: "flex" 
+                display: "flex",
+                flexDirection: "row",
             }}>
-            { props.postedby + ": " + props.comment }
+            <Typography 
+            variant="body1"
+            sx={{fontWeight: "bold"}}>
+            {props.postedby + ":"}
+            </Typography>
+            <Typography variant="body1" paddingX={0.5} >
+            {props.comment }
+            </Typography>
+            <Box sx={{ flexGrow: 1 }} />
+            <Typography variant="caption" >
+                {props.postedon === props.editedon ?
+                    'Posted:' + formatDateTime(props.postedon) :
+                    'Edited:' + formatDateTime(props.editedon)
+            }
+            </Typography>
         </Box>
     )
 }

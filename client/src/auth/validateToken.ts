@@ -1,5 +1,5 @@
 import jwt_decode from 'jwt-decode';
-import { UserType } from '../types/types';
+import { UserType } from '../misc/types';
 
 
 function getUserFromToken(): UserType | null {

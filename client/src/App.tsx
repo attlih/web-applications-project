@@ -9,12 +9,13 @@ import {
   Box,
   IconButton,
 } from '@mui/material';
-import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import { Home } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme();
 
 function App() {
+  
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
@@ -23,14 +24,9 @@ function App() {
         <AppBar position="static">
           <Toolbar >
             <IconButton edge="start" href="/">
-              <TextSnippetIcon /> Snippety
+              <Home />
             </IconButton>
-            {/* <Box sx={{justifyContent: 'right', direction: 'row', m: 5}}> */}
             <Box sx={{ flexGrow: 1 }} />
-            <Typography variant="h6" component="div">
-              Hello, world!
-            </Typography>
-            {/* </Box> */}
           </Toolbar>
         </AppBar>
         {/* Main page */}

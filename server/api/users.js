@@ -1,14 +1,9 @@
-var express = require('express');
-var router = express.Router();
-const bodyParser = require('body-parser');
-const jsonParser = bodyParser.json();
-const bcrypt = require('bcryptjs');
-const { body, validationResult } = require('express-validator');
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
-const validateToken = require('../auth/validateToken');
-const User = require('../models/User');
-
+const express = require('express')
+const router = express.Router()
+const bcrypt = require('bcryptjs')
+const { body, validationResult } = require('express-validator')
+const jwt = require('jsonwebtoken')
+const User = require('../models/User')
 
 // register a user
 // TODO add better validation?
@@ -19,94 +14,103 @@ router.post('/register/',
   body('username').isLength({ min: 3 }),
   body('password').isLength({ min: 8 }),
   (req, res) => {
-    const errors = validationResult(req);
+    const errors = validationResult(req)
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ errors: errors.array() })
     }
     // check if user already exists
-    const { username, email, password } = req.body;
-    User.findOne({ email: email }, async (err, user) => {
+    const { username, email, password } = req.body
+    User.findOne({ email }, async (err, user) => {
       if (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ error: err.message })
       }
       if (user) {
-        res.status(403).json({ message: "User already exists" });
+        res.status(403).json({ error: 'User already exists' })
       } else {
         // hash password
         bcrypt.genSalt(10, (err, salt) => {
+          if (err) {
+            res.status(500).json({ error: err.message })
+          }
           bcrypt.hash(password, salt, (err, hashedPassword) => {
             if (err) {
-              res.status(500).json({ message: err.message });
+              res.status(500).json({ error: err.message })
             }
             // create admin
             if (username === 'admin') {
               User.create({
-                email: email,
-                username: username,
+                email,
+                username,
                 password: hashedPassword,
-                admin: true,
+                admin: true
               }, (err, user) => {
                 if (err) {
-                  res.status(500).json({ message: err.message });
+                  res.status(500).json({ error: err.message })
                 }
-                res.status(201).json(user);
-              });
+                res.status(201).json(user)
+              })
             } else {
               // create user
               User.create({
-                email: email,
-                username: username,
-                password: hashedPassword,
+                email,
+                username,
+                password: hashedPassword
               }, (err, user) => {
                 if (err) {
-                  res.status(500).json({ message: err.message });
+                  res.status(500).json({ error: err.message })
                 }
-                res.status(201).json(user);
-              });
+                res.status(201).json(user)
+              })
             }
-          });
-        });
+          })
+        })
       }
-    });
+    })
   }
-);
+)
 
 // login a user
 router.post('/login/',
   (req, res) => {
     // Find user
-    const { email, password } = req.body;
-    User.findOne({ email: email }, (err, user) => {
-      if (err) {
-        res.status(500).json({ message: err.message });
-      }
-      if (!user) {
-        res.status(401).json({ message: "User does not exist" });
-      }
-      // compare password
-      bcrypt.compare(password, user.password, (err, isMatch) => {
+    const { user, password } = req.body
+    console.log(req.body)
+    if (!user || !password) {
+      res.status(400).json({ error: 'Please enter all fields' })
+    } else {
+    // handle login with username or email
+      User.findOne({ $or: [{ username: user }, { email: user }] }, (err, user) => {
         if (err) {
-          res.status(500).json({ message: err.message });
+          res.status(500).json({ error: err.message })
         }
-        if (isMatch) {
+        if (!user) {
+          res.status(401).json({ error: 'User does not exist' })
+        }
+        // compare password
+        bcrypt.compare(password, user.password, (err, isMatch) => {
+          if (err) {
+            res.status(500).json({ error: err.message })
+          }
+          if (isMatch) {
           // create token
-          const payload = {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-          };
-          jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => { 
-            if (err) {
-              res.status(500).json({ message: err.message });
+            const payload = {
+              id: user._id,
+              username: user.username,
+              email: user.email
             }
-            res.json({success: true, token: token});
-          });
-        } else {
-          res.status(401).json({ message: "Invalid credentials" });
-        }
-      });
-    });
+            jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
+              if (err) {
+                res.status(500).json({ error: err.message })
+              }
+              res.json({ success: true, token })
+            })
+          } else {
+            res.status(401).json({ error: 'Invalid credentials' })
+          }
+        })
+      })
+    }
   }
-);
+)
 
-module.exports = router;
+module.exports = router

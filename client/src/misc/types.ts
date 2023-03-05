@@ -3,6 +3,8 @@ interface CommentType {
     postedby: string,
     comment: string,
     postedon: string,
+    editedon: string,
+    likes: string[],
 }
 
 interface SnippetType {
@@ -12,6 +14,7 @@ interface SnippetType {
     shortid: string
     postedby: string,
     postedon: string,
+    editedon: string,
     likes: string[],
     comments: string[],
 }
@@ -25,13 +28,17 @@ interface UserType {
 }
 
 interface CommentForm {
-    user: string,
+    user?: string,
     comment: string,
-    shortid: string,
+    shortid?: string,
 }
 interface SnippetForm {
     title: string;
     code: string;
+}
+
+interface SearchForm {
+    search: string;
 }
 
 // export all
@@ -41,4 +48,5 @@ export type {
     UserType,
     CommentForm as CommentFormType,
     SnippetForm as SnippetFormType,
+    SearchForm as SearchFormType,
 };

@@ -3,10 +3,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
@@ -24,7 +21,7 @@ export default function SignIn(props: Props) {
   props.verifyAuth();
 
   const [user, setUser] = React.useState({
-    email: '',
+    user: '',
     password: '',
   });
 
@@ -50,7 +47,7 @@ export default function SignIn(props: Props) {
       .then((data) => {
         if (data.token) localStorage.setItem('token', data.token)
       }
-    );
+      );
   };
 
   return (
@@ -76,12 +73,12 @@ export default function SignIn(props: Props) {
               margin="normal"
               required
               fullWidth
-              id="email"
+              id="user"
               label="Email Address"
-              name="email"
+              name="user"
               autoComplete="email"
               autoFocus
-              defaultValue={user.email}
+              defaultValue={user.user}
               onChange={handleChange}
             />
             <TextField
@@ -104,9 +101,9 @@ export default function SignIn(props: Props) {
             >
               Sign In
             </Button>
-                <Link href="/register" variant="body2">
-                  {"Don't have an account?"}
-                </Link>
+            <Link href="/register" variant="body2">
+              {"Don't have an account?"}
+            </Link>
           </Box>
         </Box>
       </Container>

@@ -3,58 +3,85 @@ import {
     Card,
     CardContent,
     CardActions,
-    Button,
     IconButton,
     Typography,
     Box,
-    TextField,
 } from '@mui/material'
 import Comment from './Comment'
-import { SnippetProps } from '../types/props'
+import { SnippetProps } from '../misc/props'
 import { ThumbUp, Comment as CommentIcon } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 // highlight.js for react
 import SyntaxHighlighter from 'react-syntax-highlighter';
+import { formatDateTime } from '../misc/functions'
+import CommentForm from './CommentForm';
 
 function Snippet(props: SnippetProps) {
     if (!props.snippet) return (<div></div>);
     // filter comments by snippet
-    const comments = props.comments.filter(comment => props.snippet?.comments.some(c => c === comment._id))
+    const comments = props.comments.filter(comment =>
+        props.snippet?.comments.some(c => c === comment._id)
+    )
 
     return (
-        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: 'grey' }}>
-            <CardContent sx={{ textAlign: 'left' }}>
+        <Card sx={{ bgcolor: 'grey', height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <CardContent sx={{ textAlign: 'left', flexGrow: 1 }}>
+                {/* Title */}
                 <Typography
                     gutterBottom
                     variant="h5"
-                    component="h2"
-                    onClick={() => props.handlers.handleSnippetClick(props.snippet)}>
+                    onClick={() => props.handlers.handleSnippetClick(props.snippet)}
+                    component="h2">
                     {props.snippet.title}
+                </Typography >
+                {/* Code */}
+                <Box sx={{ maxHeight: 600, display: 'flex', flexDirection: 'column' }}>
+                    <SyntaxHighlighter >
+                        {props.snippet.code}
+                    </SyntaxHighlighter>
+                </Box>
+                {/* Timestamp */}
+                <Typography variant='body2'>
+                    { props.snippet.postedon === props.snippet.editedon ?
+                        'Posted: ' + formatDateTime(props.snippet.postedon) :
+                    'Edited: ' + formatDateTime(props.snippet.editedon)
+                    }
                 </Typography>
-                <SyntaxHighlighter >{props.snippet.code}</SyntaxHighlighter>
             </CardContent>
             <CardActions >
-                <IconButton size="small" onClick={props.handlers.handleLikeButton}>
-                    <ThumbUp /> {props.snippet.likes.length}
+                {/* Like button */}
+                <IconButton size="small" onClick={() => props.handlers.handleLikeButton(props.snippet)}>
+                    <ThumbUp />
+                    <Typography p={0.5} variant='body1'>
+                        {props.snippet.likes.length}
+                    </Typography>
                 </IconButton>
+                {/* Comment button */}
                 <IconButton
                     size="small"
                     onClick={() => props.handlers.handleSnippetClick(props.snippet)}>
-                    <CommentIcon /> {props.snippet.comments.length}
+                    <CommentIcon />
+                    <Typography p={0.5} variant='body1'>
+                        {props.snippet.comments.length}
+                    </Typography>
                 </IconButton>
-                {/* Check if user has posted */}
-                {props.user &&
-                    (props.user?.username === props.snippet.postedby ||
-                        props.user?.username === 'admin') ?
-                    <IconButton size="small" onClick={() =>
-                        props.handlers.handleEditButton(props.snippet)
-                    }><EditIcon />
+                <Box sx={{ flexGrow: 1 }} />
+                {/* Edit button */}
+                {(props.user?.id === props.snippet?.postedby ||
+                        props.user?.username === 'admin') &&
+                        props.clicked ?
+                    <IconButton
+                        size="small"
+                        onClick={() =>
+                            props.handlers.handleEditButton(props.snippet)
+                        }>
+                        <EditIcon />
                     </IconButton> :
                     null
                 }
-                {/* Check if admin user  */}
-                {props.user?.username === 'admin' ?
+                {/* Delete button */}
+                {props.user?.username === 'admin' && props.clicked ?
                     <IconButton
                         size="small"
                         onClick={() => props.handlers.handleDeleteButton(props.snippet)}>
@@ -62,48 +89,58 @@ function Snippet(props: SnippetProps) {
                     </IconButton> :
                     null
                 }
-                {/* </Stack> */}
             </CardActions>
-            {/* Show comments if snippet is clicked */}
-            {props.other.snippetClicked ?
+            {/* Comments */}
+            {props.clicked ?
                 <Stack
                     direction="column"
-                    sx={{ p: 2, bgcolor: 'grey.300', }}>
+                    sx={{ m: 0.5, p: 1, bgcolor: 'grey.300', }}>
                     {comments.map((comment) => (
-                        <Comment
+                        <Stack
                             key={comment._id}
-                            _id={comment._id}
-                            postedby={comment.postedby}
-                            comment={comment.comment}
-                            postedon={comment.postedon} />
+                            direction={'row'}
+                            sx={{ m: 0.5, }}>
+                            <Comment
+                                _id={comment._id}
+                                postedby={comment.postedby}
+                                comment={comment.comment}
+                                postedon={comment.postedon}
+                                likes={comment.likes}
+                                editedon={comment.editedon} />
+                            {/* Like button */}
+                            <IconButton
+                                onClick={() => props.handlers.handleCommentLikeButton(comment)}>
+                                <ThumbUp />
+                                <Typography p={0.5} variant='body1'>
+                                    {comment.likes.length}
+                                </Typography>
+                            </IconButton>
+
+                            {/* Edit button */}
+                            {(props.user?.username === comment?.postedby ||
+                            props.user?.username === 'admin') ?
+                                <IconButton
+                                    onClick={() => props.handlers.handleCommentEditButton(comment)}>
+                                    <EditIcon />
+                                </IconButton> :
+                                null
+                            }
+                            {/* Delete button */}
+                            {props.user?.username === 'admin' ?
+                                <IconButton
+                                    onClick={() => props.handlers.handleCommentDeleteButton(comment)}>
+                                    <DeleteForeverIcon />
+                                </IconButton> :
+                                null
+                            }
+                        </Stack>
                     ))}
-                    {/* Show new comment section */}
-                    {props.user ?
-                        <Box
-                            component={'form'}
-                            sx={{
-                                display: 'inline-flex',
-                                flexDirection: 'column',
-                                justifyContent: 'space-evenly',
-                            }}
-                            onSubmit={props.handlers.handleCommentSubmit}
-                            autoComplete="off">
-                            <TextField
-                                variant='outlined'
-                                label='Write a comment'
-                                name='comment'
-                                sx={{ bgcolor: 'white', mt: 1 }}
-                                required
-                                defaultValue={props.other.commentForm.comment}
-                                onChange={props.handlers.handleCommentChange}
-                                rows={6} />
-                            <Button
-                                type='submit'
-                                variant='contained'
-                                sx={{ mt: 2 }}>
-                                Submit
-                            </Button>
-                        </Box> :
+                    {/* New comment */}
+                    {props.snippet && props.user ?
+                        <CommentForm
+                            commentForm={props.commentForm.commentForm}
+                            handleCommentChange={props.commentForm.handleCommentChange}
+                            handleCommentSubmit={props.commentForm.handleCommentSubmit} /> :
                         null
                     }
                 </Stack> :
