@@ -31,18 +31,21 @@ JWT_SECRET="your_secret"
 NODE_ENV="production"
 ```
 
-You can also set `NODE_ENV` to `development` in case you want to develop the code.
+After that, just run and head to [Localhost](http://localhost:4000)
 
-Next, you must build the project. Go to root folder and run following command
-
- //TODO continue
 ```
-npm build
+npm start
+```
+
+In case you want to develop this code further, you can set `NODE_ENV` to `development` and run following command to start development version:
+
+```
+npm run dev
 ```
 
 ## User manual
 ### Login and register
-When connecting to [Localhost](http://localhost:3000), users can see all the snippets and filter them without logging in. Users are also able to click a snippet title or comment button to focus on that snippet showing comments. Any other interaction requires registration.
+When connecting to the site, users can see all the snippets and filter them without logging in. Users are also able to click a snippet title or comment button to focus on that snippet showing comments. Any other interaction requires registration.
 
 User must be created first by pressing **Register** and submitting required information. After registration, user can **Login** with email or username. There is **admin** user with advanced functionalities. It is the first user created with username *admin*.
 

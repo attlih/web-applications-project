@@ -22,21 +22,6 @@ mongoose.Promise = Promise
 const db = mongoose.connection
 db.on('error', console.error.bind('MongoDB connection error'))
 
-// set up cors
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.resolve('..', 'client', 'build')))
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve('..', 'client', 'build', 'index.html'))
-  })
-} else if (process.env.NODE_ENV === 'development') {
-  const corsOptions = {
-    origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200
-  }
-  app.use(cors(corsOptions))
-}
-console.log('NODE_ENV:', process.env.NODE_ENV)
-
 // middleware setup
 app.use(logger('dev'))
 app.use(express.json())
@@ -47,7 +32,21 @@ app.use('/snippet', snippetsRouter)
 app.use('/user', usersRouter)
 app.use('/comment', commentsRouter)
 
-// set public folder
-app.use(express.static(path.join(__dirname, 'public')))
+// set up cors
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.resolve('..', 'client', 'build')))
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve('..', 'client', 'build', 'index.html'))
+  })
+} else if (process.env.NODE_ENV === 'development') {
+  // set public folder
+  app.use(express.static(path.join(__dirname, 'public')))
+  const corsOptions = {
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200
+  }
+  app.use(cors(corsOptions))
+}
+console.log('NODE_ENV:', process.env.NODE_ENV)
 
 module.exports = app

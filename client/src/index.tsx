@@ -14,14 +14,6 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import { getUserFromToken } from './auth/validateToken';
 
-
-const requireAuth = () => {
-  if(!localStorage.getItem('token')) {
-    window.location.href = '/login';
-  }
-  // stay on this route since the user is authenticated
-}
-
 const verifyAuth = () => {
   if(getUserFromToken()) {
     window.location.href = '/';
