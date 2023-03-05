@@ -57,7 +57,7 @@ router.post('/register/',
                 password: hashedPassword
               }, (err, user) => {
                 if (err) {
-                  res.status(500).json({ error: err.message })
+                  return res.status(500).json({ error: err.message })
                 }
                 res.status(201).json(user)
               })
@@ -75,20 +75,20 @@ router.post('/login/',
     // Find user
     const { user, password } = req.body
     if (!user || !password) {
-      res.status(400).json({ error: 'Please enter all fields' })
+      return res.status(400).json({ error: 'Please enter all fields' })
     } else {
     // handle login with username or email
       User.findOne({ $or: [{ username: user }, { email: user }] }, (err, user) => {
         if (err) {
-          res.status(500).json({ error: err.message })
+          return res.status(500).json({ error: err.message })
         }
         if (!user) {
-          res.status(401).json({ error: 'User does not exist' })
+          return res.status(401).json({ error: 'User does not exist' })
         }
         // compare password
         bcrypt.compare(password, user.password, (err, isMatch) => {
           if (err) {
-            res.status(500).json({ error: err.message })
+            return res.status(500).json({ error: err.message })
           }
           if (isMatch) {
           // create token
@@ -99,12 +99,12 @@ router.post('/login/',
             }
             jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
               if (err) {
-                res.status(500).json({ error: err.message })
+                return res.status(500).json({ error: err.message })
               }
-              res.json({ success: true, token })
+              return res.json({ success: true, token })
             })
           } else {
-            res.status(401).json({ error: 'Invalid credentials' })
+            return res.status(401).json({ error: 'Invalid credentials' })
           }
         })
       })

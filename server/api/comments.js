@@ -10,9 +10,9 @@ router.get('/',
   (req, res) => {
     Comment.find({}, (err, comments) => {
       if (err) {
-        res.status(500).json({ error: err.message })
+        return res.status(500).json({ error: err.message })
       }
-      res.json(comments)
+      return res.json(comments)
     })
   }
 )
@@ -24,9 +24,9 @@ router.get('/:id',
       .populate('comments')
       .exec((err, snippet) => {
         if (err) {
-          res.status(500).json({ error: err.message })
+          return res.status(500).json({ error: err.message })
         }
-        res.json(snippet.comments)
+        return res.json(snippet.comments)
       })
   }
 )
@@ -50,9 +50,9 @@ router.post('/', validateToken,
         { $push: { comments: comment._id } },
         { new: true }
       )
-      res.status(201).json(comment)
+      return res.status(201).json(comment)
     } catch (err) {
-      res.status(500).json({ error: err.message })
+      return res.status(500).json({ error: err.message })
     }
   }
 )
@@ -73,9 +73,9 @@ router.post('/like/:id', validateToken,
         comment.likes.splice(index, 1)
       }
       await comment.save()
-      res.json(comment)
+      return res.json(comment)
     } catch (err) {
-      res.status(500).json({ error: err.message })
+      return res.status(500).json({ error: err.message })
     }
   }
 )
@@ -89,9 +89,9 @@ router.post('/edit/:id', validateToken,
       { new: true },
       (err, comment) => {
         if (err) {
-          res.status(500).json({ error: err.message })
+          return res.status(500).json({ error: err.message })
         }
-        res.json(comment)
+        return res.json(comment)
       })
   }
 )
@@ -104,17 +104,17 @@ router.post('/delete/:id', validateToken, validateAdmin,
     // delete comment
     Comment.findByIdAndDelete(req.params.id, (err, comment) => {
       if (err) {
-        res.status(500).json({ error: err.message })
+        return res.status(500).json({ error: err.message })
       }
       Snippet.findByIdAndUpdate(req.body.snippet,
         { $pull: { comments: req.params.id } },
         { new: true },
         (err, snippet) => {
           if (err) {
-            res.status(500).json({ error: err.message })
+            return res.status(500).json({ error: err.message })
           }
         })
-      res.json(comment)
+      return res.json(comment)
     })
   }
 )

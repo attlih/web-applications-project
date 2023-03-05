@@ -9,9 +9,9 @@ const validateAdmin = require('../auth/validateAdmin')
 router.get('/', (req, res) => {
   Snippet.find({}, (err, snippets) => {
     if (err) {
-      res.status(500).json({ error: err.message })
+      return res.status(500).json({ error: err.message })
     }
-    res.json(snippets)
+    return res.json(snippets)
   })
 })
 
@@ -20,9 +20,9 @@ router.get('/:id',
   (req, res) => {
     Snippet.findOne({ shortid: req.params.id }, (err, snippet) => {
       if (err) {
-        res.status(500).json({ error: err.message })
+        return res.status(500).json({ error: err.message })
       }
-      res.json(snippet)
+      return res.json(snippet)
     })
   }
 )
@@ -32,9 +32,9 @@ router.post('/search/', (req, res) => {
   // find matches from title and code
   Snippet.find({ $or: [{ title: { $regex: req.body.search, $options: 'i' } }, { code: { $regex: req.body.search, $options: 'i' } }] }, (err, snippets) => {
     if (err) {
-      res.status(500).json({ error: err.message })
+      return res.status(500).json({ error: err.message })
     }
-    res.json(snippets)
+    return res.json(snippets)
   })
 })
 
@@ -52,9 +52,9 @@ router.post('/add', validateToken,
     })
     snippet.save((err, snippet) => {
       if (err) {
-        res.status(500).json({ error: err.message })
+        return res.status(500).json({ error: err.message })
       }
-      res.status(201).json(snippet)
+      return res.status(201).json(snippet)
     })
   }
 )
@@ -76,12 +76,12 @@ router.post('/like/:id', validateToken,
       }
       snippet.save((err, snippet) => {
         if (err) {
-          res.status(500).json({ error: err.message })
+          return res.status(500).json({ error: err.message })
         }
-        res.status(201).json(snippet)
+        return res.status(201).json(snippet)
       })
     } catch (err) {
-      res.status(500).json({ error: err.message })
+      return res.status(500).json({ error: err.message })
     }
   }
 )
@@ -101,12 +101,12 @@ router.post('/update/:id', validateToken,
       }
       snippet.save((err, snippet) => {
         if (err) {
-          res.status(500).json({ error: err.message })
+          return res.status(500).json({ error: err.message })
         }
-        res.status(201).json(snippet)
+        return res.status(201).json(snippet)
       })
     } catch (err) {
-      res.status(500).json({ error: err.message })
+      return res.status(500).json({ error: err.message })
     }
   }
 
@@ -119,15 +119,15 @@ router.post('/delete/:id', validateToken, validateAdmin,
   (req, res, next) => {
     Snippet.findOneAndDelete({ shortid: req.params.id }, (err, snippet) => {
       if (err) {
-        res.status(500).json({ error: err.message })
+        return res.status(500).json({ error: err.message })
       }
       // Delete all comments associated with snippet
       Comment.deleteMany({ _id: { $in: snippet.comments } }, (err) => {
         if (err) {
-          res.status(500).json({ error: err.message })
+          return res.status(500).json({ error: err.message })
         }
       })
-      res.status(201).json(snippet)
+      return res.status(201).json(snippet)
     })
   }
 )

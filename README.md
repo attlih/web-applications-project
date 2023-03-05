@@ -31,13 +31,15 @@ JWT_SECRET="your_secret"
 NODE_ENV="production"
 ```
 
-After that, just run and head to [Localhost](http://localhost:4000)
+After that, just run these commands and head to [Localhost](http://localhost:4000)
 
 ```
+npm run pre-install
+npm run install
 npm start
 ```
 
-In case you want to develop this code further, you can set `NODE_ENV` to `development` and run following command to start development version:
+In case you want to develop this code further, you can set `NODE_ENV` to `development` and run following command to start development version. This will run on port 3000.
 
 ```
 npm run dev
