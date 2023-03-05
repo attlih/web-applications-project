@@ -74,7 +74,6 @@ router.post('/login/',
   (req, res) => {
     // Find user
     const { user, password } = req.body
-    console.log(req.body)
     if (!user || !password) {
       res.status(400).json({ error: 'Please enter all fields' })
     } else {

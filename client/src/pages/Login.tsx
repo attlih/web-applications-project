@@ -1,54 +1,64 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import React from 'react'
+import { useState, type FormEvent } from 'react'
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  Link,
+  Box,
+  Typography,
+  Container,
+  createTheme,
+  ThemeProvider
+} from '@mui/material'
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 
 interface Props {
-  verifyAuth: () => void;
+  verifyAuth: () => void
 }
 
-const theme = createTheme();
+const theme = createTheme()
 
-export default function SignIn(props: Props) {
+export default function SignIn (props: Props): JSX.Element {
   // redirect to home if user is already logged in
-  props.verifyAuth();
-
-  const [user, setUser] = React.useState({
+  props.verifyAuth()
+  const [error, setError] = useState('')
+  const [user, setUser] = useState({
     user: '',
-    password: '',
-  });
+    password: ''
+  })
 
-  const handleChange = (e: any) => { // TODO fix type
-    setUser({ ...user, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e: any): void => { // TODO fix type
+    setUser({ ...user, [e.target.name]: e.target.value })
+  }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault()
     fetch('/user/login', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(user),
+      body: JSON.stringify(user)
     })
-      .then((response) => {
+      .then(async (response) => {
         if (response.ok) {
-          window.location.href = '/';
+          window.location.href = '/'
         }
-        return response.json();
+        return await response.json()
       })
       .then((data) => {
-        if (data.token) localStorage.setItem('token', data.token)
-      }
-      );
-  };
+        if (data.error !== undefined) {
+          setError(data.error)
+          return
+        }
+        if (data.token !== null) localStorage.setItem('token', data.token)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -59,7 +69,7 @@ export default function SignIn(props: Props) {
             marginTop: 8,
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
+            alignItems: 'center'
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
@@ -68,7 +78,11 @@ export default function SignIn(props: Props) {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -93,6 +107,7 @@ export default function SignIn(props: Props) {
               defaultValue={user.password}
               onChange={handleChange}
             />
+            <Typography color="error" variant='body2'>{error}</Typography>
             <Button
               type="submit"
               fullWidth
@@ -108,5 +123,5 @@ export default function SignIn(props: Props) {
         </Box>
       </Container>
     </ThemeProvider>
-  );
+  )
 }

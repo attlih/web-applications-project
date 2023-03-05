@@ -1,9 +1,10 @@
-import { Search } from "@mui/icons-material"
-import { Box, IconButton, TextField } from "@mui/material"
-import {SearchFormProps} from "../misc/props"
+import React from 'react'
+import { Search } from '@mui/icons-material'
+import { Box, IconButton, TextField } from '@mui/material'
+import { type SearchFormProps } from '../misc/props'
 
-const SearchForm = (props: SearchFormProps) => {
-    return (
+const SearchForm = (props: SearchFormProps): JSX.Element => {
+  return (
       <Box
         component="form"
         justifyContent={'center'}
@@ -18,7 +19,7 @@ const SearchForm = (props: SearchFormProps) => {
           <Search />
         </IconButton>
       </Box>
-    )
-  }
+  )
+}
 
-  export default SearchForm
+export default SearchForm

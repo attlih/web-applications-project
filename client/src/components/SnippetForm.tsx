@@ -1,32 +1,32 @@
+import React from 'react'
 import {
-    Box,
-    Button,
-    TextField,
-} from '@mui/material';
-import { SnippetFormProps } from '../misc/props'
+  Box,
+  Button,
+  TextField
+} from '@mui/material'
+import { type SnippetFormProps } from '../misc/props'
 
-export default function SnippetForm(props: SnippetFormProps) {
+export default function SnippetForm (props: SnippetFormProps): JSX.Element {
+  // handle tab keypress
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>): void => {
+    if (event.key === 'Tab') {
+      event.preventDefault()
+      const target = event.target as HTMLTextAreaElement
+      const start = target.selectionStart
+      const end = target.selectionEnd
+      target.value = target.value.substring(0, start) + '\t' + target.value.substring(end)
+      target.selectionStart = target.selectionEnd = start + 1
+      props.handlers.handleSnippetFormChange(target.value)
+    }
+  }
 
-    // handle tab keypress
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (event.key === 'Tab') {
-            event.preventDefault();
-            const target = event.target as HTMLTextAreaElement;
-            const start = target.selectionStart;
-            const end = target.selectionEnd;
-            target.value = target.value.substring(0, start) + '\t' + target.value.substring(end);
-            target.selectionStart = target.selectionEnd = start + 1;
-            props.handlers.handleSnippetFormChange(target.value);
-        }
-      };
-
-    return (
+  return (
         <Box
             component={'form'}
             sx={{
-                display: 'inline-flex',
-                flexDirection: 'column',
-                justifyContent: 'space-evenly',
+              display: 'inline-flex',
+              flexDirection: 'column',
+              justifyContent: 'space-evenly'
             }}
             onSubmit={props.handlers.handleSnippetFormSubmit}
             autoComplete="off">
@@ -37,9 +37,9 @@ export default function SnippetForm(props: SnippetFormProps) {
             <TextField variant='outlined' label='Code' name='code' sx={{ mt: 1 }} type=''
                 required multiline rows={6}
                 value={props.data.code}
-                onChange={props.handlers.handleSnippetFormChange} 
+                onChange={props.handlers.handleSnippetFormChange}
                 onKeyDown={ handleKeyDown } />
             <Button type='submit' variant='contained' sx={{ mt: 2 }}>Submit</Button>
         </Box>
-    )
+  )
 }

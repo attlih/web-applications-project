@@ -1,5 +1,4 @@
 const express = require('express')
-// require the snippet model
 const { Snippet, Comment } = require('../models/Post')
 const router = express.Router()
 const shortid = require('shortid')
@@ -68,6 +67,7 @@ router.post('/like/:id', validateToken,
       if (!snippet) {
         return res.status(404).json({ error: 'Snippet not found.' })
       }
+      // check if user has already liked snippet
       const index = snippet.likes.indexOf(req.user.id)
       if (index === -1) {
         snippet.likes.push(req.user.id)

@@ -6,10 +6,10 @@ module.exports = function (req, res, next) {
   let token
   if (authHeader) token = authHeader.split(' ')[1]
   else token = null
-  if (token === null) return res.status(401).json({ msg: 'Access denied' })
+  if (token === null) return res.status(401).json({ error: 'Access denied' })
   // verify token
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) return res.status(401).json({ msg: 'Invalid token' })
+    if (err) return res.status(401).json({ error: 'Invalid token' })
     // set user info
     req.user = decoded
     next()
